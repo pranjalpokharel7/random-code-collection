@@ -1,0 +1,134 @@
+% Based on the layout we usually need to use as engineering students.
+% Output: https://drive.google.com/file/d/16eNLZ0Vcf6K79jPwpKj6qzJ1O54koLU8/view?usp=sharing
+
+% Add Tribhuwan University (TU) logo named 'TU-logo.png' (jpg/pdf) inside './resources/' 
+% directory relative to root. You can download and include your own logo in the 
+% directory (set paths + filename correctly).
+% Adjust the logo scale factor from \newcommand\logoScaleFactor{<your-scale-factor>}
+% The logo I have used can be downloaded from the following drive link - 
+% Logo: https://drive.google.com/file/d/1OVkWmZXikLdYjIFgPGpvKb8-1HHSFQS4/view?usp=sharing
+
+% Write your name within \newcommand\studentName{<your-name>}
+% Changing values of other variables should be self-explanatory by their names.
+% If you have any confusion, please notify me through the comments.
+
+\documentclass[12pt]{article}
+
+% define values for your variables here
+\newcommand\experimentDate{2021/07/10}
+\newcommand\submissionDate{2021/07/22}
+
+\newcommand\campusName{PULCHOWK CAMPUS}
+\newcommand\assignmentTitle{REPORT WRITING}  
+\newcommand\studentName{Jon Doe}
+\newcommand\rollNumber{075BCT000}
+\newcommand\group{F}
+\newcommand\departmentName{Department of Science and Humanities}
+
+% change your filename if you have it named something else under 
+% \newcommand\logoFileName{<your-image-filename>}, file extension not required
+\newcommand\logoPath{./resources/}
+\newcommand\logoFileName{TU-logo}
+\newcommand\logoScaleFactor{0.5}
+
+% package for font face, I have used helvetica here
+% for all available font faces, 
+% Link : https://www.overleaf.com/learn/latex/Font_typefaces
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+
+\usepackage[utf8]{inputenc}
+\usepackage{multicol}
+\usepackage{graphicx}
+\graphicspath{ {\logoPath} }
+\usepackage[textwidth=450pt]{geometry}
+
+% this package is for drawing lines in the middle of the page and for the borders
+% if not required, remove this, the draw and the background portion below
+\usepackage{tikz}
+
+% remove this section if you don't want the borders (lines used as background)
+% might look for an elegant solutions for page borders in the future
+
+% border section begin
+\usepackage{background}
+\usetikzlibrary{calc}
+
+\SetBgScale{1}
+\SetBgAngle{0}
+\SetBgColor{black}
+\SetBgContents{
+  \begin{tikzpicture}
+    \draw [line width=1.8pt]
+        ($ (current page.north west) + (0.5cm,-0.5cm) $)
+        rectangle
+        ($ (current page.south east) + (-0.5cm,0.5cm) $);
+    \draw [line width=1.3pt]
+        ($ (current page.north west) + (0.7cm,-0.7cm) $)
+        rectangle
+        ($ (current page.south east) + (-0.7cm,0.7cm) $);
+  \end{tikzpicture}
+}
+%border section end
+
+\begin{document}
+% remove page number since this is a single page document by default
+\thispagestyle{empty}
+
+\begin{center}
+  \begin{figure}[t]
+    \includegraphics[scale=\logoScaleFactor]{\logoFileName}
+    \centering
+  \end{figure}
+  \textbf{
+    \Large{
+      TRIBHUWAN UNIVERSITY \\
+      INSTITUTE OF ENGINEERING (IOE) \\
+      \vspace{5mm}
+      \campusName \\
+    }
+    \vspace{8mm}
+    \large {
+      \assignmentTitle
+    }
+  }
+\end{center}
+
+% draw portion (three center lines)
+\vspace{5mm}
+\begin{center}
+  \begin{tikzpicture}
+    \draw[thick] (0,0) -- (0,5);
+    \draw[thick] (0.8,1) -- (0.8,4);
+    \draw[thick] (1.6,0) -- (1.6,5);
+  \end{tikzpicture}
+\end{center}
+% draw portion end
+
+\vfill
+
+\begin{multicols}{2}
+
+  \begin{flushleft}
+    \textbf{Experiment Date:} \\
+    \experimentDate \\
+    \vspace{3mm}
+    \textbf{Submitted By:} \\
+    Name: \studentName \\
+    Roll Number: \rollNumber \\
+    Group: \group \\
+  \end{flushleft}
+
+  \columnbreak
+
+  \begin{flushright}
+    \textbf{Submission Date:} \\
+    \submissionDate \\
+    \vspace{3mm}
+    \textbf{Submitted To:} \\
+    Department of \\
+    \departmentName
+  \end{flushright}
+
+\end{multicols}
+\end{document}
