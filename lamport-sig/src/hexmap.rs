@@ -16,6 +16,6 @@ pub fn hex_map_u8(utf_byte: &u8) -> u8 {
         100 => 13,
         101 => 14,
         102 => 15,
-        _ => *utf_byte,
+        x => panic!("Encountered unexpected hex character: {}", x),
     }
 }

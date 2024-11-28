@@ -1,29 +1,18 @@
-use rand::RngCore;
+use key::Key;
 use sha256::digest;
 
 mod hexmap;
+mod key;
 
-#[derive(Debug)]
-pub struct Key {
-    pub zeros: Vec<String>,
-    pub ones: Vec<String>,
-}
-
-impl Key {
-    pub fn new() -> Self {
-        Self {
-            zeros: Vec::with_capacity(256),
-            ones: Vec::with_capacity(256),
-        }
-    }
-
-    pub fn bit_choice(&self, bit: u8) -> &Vec<String> {
-        match bit {
-            0 => &self.zeros,
-            1 => &self.ones,
-            _ => &self.zeros,
-        }
-    }
+fn generate_and_populate_keys(
+    rng: &mut impl rand::Rng,
+    private: &mut Vec<String>,
+    public: &mut Vec<String>,
+) {
+    let value = rng.next_u32();
+    let row = digest(value.to_string());
+    private.push(row.clone());
+    public.push(digest(row));
 }
 
 pub fn keygen() -> (Key, Key) {
@@ -32,15 +21,8 @@ pub fn keygen() -> (Key, Key) {
 
     let mut rng = rand::thread_rng();
     for _ in 0..256 {
-        let z: u32 = rng.next_u32();
-        let zero_row = digest(z.to_string());
-        public_key.zeros.push(digest(zero_row.clone()));
-        private_key.zeros.push(zero_row);
-
-        let o: u32 = rng.next_u32();
-        let one_row = digest(o.to_string());
-        public_key.ones.push(digest(one_row.clone()));
-        private_key.ones.push(one_row);
+        generate_and_populate_keys(&mut rng, &mut private_key.zeros, &mut public_key.zeros);
+        generate_and_populate_keys(&mut rng, &mut private_key.ones, &mut public_key.ones);
     }
 
     (private_key, public_key)
@@ -53,7 +35,8 @@ pub fn sign(message: &String, private_key: &Key) -> Vec<String> {
         let num = hexmap::hex_map_u8(c);
         for i in 0..4 {
             let k = (num >> (3 - i)) & 1;
-            signature.push(private_key.bit_choice(k)[j * 4 + i].clone());
+            let offset = j * 4 + i;
+            signature.push(private_key[k][offset].clone());
         }
     }
     signature
@@ -65,8 +48,9 @@ pub fn verify(message: &String, public_key: &Key, signature: &Vec<String>) -> bo
         let num = hexmap::hex_map_u8(c);
         for i in 0..4 {
             let k = (num >> (3 - i)) & 1;
-            let v = digest(signature[j * 4 + i].clone());
-            if public_key.bit_choice(k)[j * 4 + i] != v {
+            let offset = j * 4 + i;
+            let v = digest(signature[offset].clone());
+            if public_key[k][offset] != v {
                 return false;
             }
         }
@@ -79,7 +63,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
+    fn assert_signature_signing_verification() {
         let (private_key, public_key) = keygen();
         let message = String::from("I am Pranjal.");
         let signature = sign(&message, &private_key);
